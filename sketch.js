@@ -1,29 +1,31 @@
-let x = 0;
+let lineaX = 0;
+let url = "http://api.open-notify.org/iss-now.json";
 let datosEspaciales;
+let issX = 0;
+let issY = 0;
 function setup() {
   createCanvas(600, 400);
-  //Esta API devuelve el número actual de personas en el espacio. Cuando se conoce, también devuelve los nombres y las naves espaciales en las que se encuentran esas personas. Esta API no acepta entradas.
-  //TODO: para acceder de otra manera cuando no responde la API se puede utilizar "JSONP, como tercer argumento  en loadJSON"
-  loadJSON("http://api.open-notify.org/astros.json", datosObtenidos);
+  setInterval(pedirISS, 100);
 }
-function datosObtenidos(data) {
+function pedirISS() {
+  loadJSON(url, obtenerDatos);
+}
+function obtenerDatos(data) {
   datosEspaciales = data;
+  let latitud = datosEspaciales.iss_position.latitude;
+  let longitud = datosEspaciales.iss_position.longitude;
+
+  issX = map(latitud, -90, 90, 0, width);
+  issY = map(longitud, -90, 90, 0, height);
 }
 function draw() {
-  background(0);
-  stroke(255);
-  line(x, 0, x, height);
-  x += 1;
-  if (x > width) {
-    x = 0;
-  }
-  console.log(datosEspaciales);
+  background(51);
+  circle(issX, issY, 10);
 
-  if (datosEspaciales) {
-    randomSeed(4);
-    for (let i = 0; i < datosEspaciales.number; i++) {
-      fill(255);
-      circle(random(width), random(height), 20);
-    }
+  stroke(255);
+  line(lineaX, 0, lineaX, height);
+  lineaX += 5;
+  if (lineaX > width) {
+    lineaX = 0;
   }
 }
